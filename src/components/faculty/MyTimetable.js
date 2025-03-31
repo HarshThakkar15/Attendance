@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import '../styles/style.css';
+//import '../styles/style.css';
 
-const Timetable = () => {
-    const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-    const [classes, setClasses] = useState([]);
-    const [selectedClass, setSelectedClass] = useState("");
+const MyTimetable = () => {
+    const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const [timetable, setTimetable] = useState([]);
     const [currentDay, setCurrentDay] = useState(new Date().toLocaleString('en-us', { weekday: 'long' }));
     const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
@@ -12,56 +10,37 @@ const Timetable = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // Fetch classes
-    useEffect(() => {
-        const fetchClasses = async () => {
-            try {
-                setIsLoading(true);
-                const response = await fetch('http://localhost:3001/classes');
-                const data = await response.json();
-                setClasses(data);
-                if (data.length > 0) setSelectedClass(data[0].id);
-            } catch (err) {
-                setError("Failed to fetch classes");
-                console.error("Error fetching classes:", err);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchClasses();
-    }, []);
+    // Replace this with actual user's class ID from your auth system
+    const userClassId = 1; // Example: Get from context/state
 
-    // Fetch timetable when class or day changes
+    // Fetch timetable when day changes
     useEffect(() => {
         const fetchTimetable = async () => {
-            if (!selectedClass) return;
-            
             try {
                 setIsLoading(true);
                 const response = await fetch(
-                    `http://localhost:3001/timetable/${selectedClass}/${currentDay}`
+                    `http://localhost:3001/timetable/${userClassId}/${currentDay}`
                 );
                 const data = await response.json();
                 
-                // Fallback client-side sorting if backend doesn't sort
-                const sortedTimetable = data.timetable.sort((a, b) => {
+                // Client-side sorting
+                const sortedTimetable = data.timetable?.sort((a, b) => {
                     const getTimeValue = (timeStr) => {
                         if (!timeStr || !timeStr.includes(" - ")) return 0;
                         const [start] = timeStr.split(" - ");
                         let [hours, minutes] = start.split(":").map(Number);
                 
                         // Convert 12-hour format to 24-hour format
-                        if (hours < 8) hours += 12; 
+                        if (hours < 8) hours += 12;
                 
-                        return hours * 60 + minutes; 
+                        return hours * 60 + minutes;
                     };
                 
                     return getTimeValue(a.time) - getTimeValue(b.time);
-                });
+                }) || [];
                 
-                
-                setTimetable(sortedTimetable || []);
-                checkCurrentLecture(sortedTimetable || []);
+                setTimetable(sortedTimetable);
+                checkCurrentLecture(sortedTimetable);
             } catch (err) {
                 setError("Failed to fetch timetable");
                 console.error("Error fetching timetable:", err);
@@ -70,7 +49,7 @@ const Timetable = () => {
             }
         };
         fetchTimetable();
-    }, [selectedClass, currentDay]);
+    }, [currentDay, userClassId]);
 
     // Update current time and check current lecture
     useEffect(() => {
@@ -112,25 +91,10 @@ const Timetable = () => {
 
     return (
         <div className="timetable-container">
-            <h2>📅 Timetable</h2>
+            <h2>📅 My Timetable</h2>
             <p>⏰ Current Time: {currentTime}</p>
 
             <div className="controls">
-                <div className="class-selector">
-                    <label>Class: </label>
-                    <select 
-                        value={selectedClass}
-                        onChange={(e) => setSelectedClass(e.target.value)}
-                        disabled={isLoading}
-                    >
-                        {classes.map(cls => (
-                            <option key={cls.id} value={cls.id}>
-                                {cls.class_name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-
                 <div className="day-buttons">
                     {daysOfWeek.map(day => (
                         <button
@@ -157,7 +121,7 @@ const Timetable = () => {
                 </div>
             )}
 
-            <h3>Timetable for {classes.find(c => c.id == selectedClass)?.class_name} - {currentDay}</h3>
+            <h3>Timetable for {currentDay}</h3>
 
             {timetable.length > 0 ? (
                 <div className="table-wrapper">
@@ -199,4 +163,4 @@ const Timetable = () => {
     );
 };
 
-export default Timetable;
+export default MyTimetable;

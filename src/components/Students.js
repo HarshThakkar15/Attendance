@@ -11,7 +11,7 @@ function Students() {
     className: ''
   });
 
-  // Enhanced fetch function
+  // fetch function
   const fetchWithTimeout = async (url, options = {}, timeout = 5000) => {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
@@ -49,7 +49,7 @@ function Students() {
     fetchClasses();
   }, []);
 
-  // Update your handleSearch function to match:
+  // handleSearch function 
 const handleSearch = async () => {
   if (!searchParams.enrollment && !searchParams.className) {
     setError('Please enter enrollment number or select a class');
@@ -83,7 +83,6 @@ const handleSearch = async () => {
   }
 };
 
-  // ... (keep the rest of your component code the same) ...
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setSearchParams(prev => ({

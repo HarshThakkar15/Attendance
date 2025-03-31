@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaUserGraduate, FaChalkboardTeacher, FaCalendarAlt, FaClipboardList } from "react-icons/fa";
-import "./Dashboard.css"; // We'll create this CSS file
+import "./Dashboard.css"; 
 
 const Dashboard = () => {
     const menuItems = [

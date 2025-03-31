@@ -4,12 +4,11 @@ const cors = require("cors");
 
 const app = express();
 
-// Enhanced CORS configuration
 app.use(cors());
 
 app.use(express.json());
 
-// Database connection with error handling
+// Database connection 
 const pool = mysql.createPool({
   host: "localhost",
   user: "root",
@@ -33,7 +32,7 @@ async function testConnection() {
 }
 testConnection();
 
-// Students endpoint - updated to match frontend
+// Students endpoint 
 app.get('/students', async (req, res) => {
   try {
     const { enrollment_no, class: className } = req.query;
@@ -87,7 +86,7 @@ app.get('/students', async (req, res) => {
   }
 });
 
-// Classes endpoint with better error handling
+// Classes endpoint
 app.get("/classes", async (req, res) => {
   try {
     const [classes] = await pool.query(
@@ -112,7 +111,6 @@ app.get("/classes", async (req, res) => {
   }
 });
 
-// Keep your other endpoints (faculty, timetable) as they were...
 // Faculty endpoints (new)
 app.get('/faculty', async (req, res) => {
   try {

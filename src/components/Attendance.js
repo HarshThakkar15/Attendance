@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Webcam from "react-webcam";
-import "./Attendance.css"; // We'll create this CSS file
+import "./Attendance.css"; 
 
 const Attendance = () => {
   const [attendanceMarked, setAttendanceMarked] = useState(false);
